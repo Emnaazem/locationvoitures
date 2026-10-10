@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>حل رقمي لوكالات كراء السيارات</title>
+<style>
+:root{
+  --navy:#0f2942; --teal:#17a2a2; --amber:#f5a623; --bg:#f6f8fa; --card:#fff; --txt:#12222f; --muted:#5a6b78;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --bg:#0b1620; --card:#132330; --txt:#eef3f7; --muted:#9db0bd; }
+}
+:root[data-theme="dark"]{ --bg:#0b1620; --card:#132330; --txt:#eef3f7; --muted:#9db0bd; }
+body{margin:0; font-family:'Tahoma','Segoe UI',sans-serif; background:var(--bg); color:var(--txt);}
+.hero{
+  background:linear-gradient(135deg,var(--navy),#1a4a6e);
+  color:#fff; text-align:center; padding:calc(46px + env(safe-area-inset-top,0px)) 20px 46px;
+}
+.hero h1{font-size:1.7rem; margin:0 0 10px; line-height:1.5;}
+.hero p{font-size:1rem; color:#cfe4ee; max-width:520px; margin:0 auto 22px;}
+.hero .cta{
+  display:inline-block; background:var(--amber); color:#2b1900; font-weight:bold;
+  padding:13px 26px; border-radius:30px; text-decoration:none; font-size:.95rem;
+}
+main{max-width:800px; margin:0 auto; padding:34px 18px 20px;}
+h2{font-size:1.25rem; text-align:center; margin-bottom:22px;}
+.problems{display:grid; gap:12px; margin-bottom:38px;}
+.problem{background:var(--card); border-radius:12px; padding:14px 16px; display:flex; gap:12px; align-items:flex-start; box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.problem .ico{font-size:1.4rem;}
+.problem p{margin:0; font-size:.9rem; color:var(--muted);}
+.features{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:16px; margin-bottom:40px;}
+.feature{background:var(--card); border-radius:14px; padding:18px; box-shadow:0 3px 10px rgba(0,0,0,.06);}
+.feature .ico{font-size:1.8rem; margin-bottom:8px;}
+.feature h3{margin:0 0 6px; font-size:1rem;}
+.feature p{margin:0; font-size:.83rem; color:var(--muted); line-height:1.6;}
+.mock{background:var(--card); border-radius:16px; padding:16px; box-shadow:0 4px 14px rgba(0,0,0,.08); margin-bottom:40px;}
+.mock h4{margin:0 0 12px; font-size:.9rem; color:var(--muted);}
+.calendar{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+.calendar .day{aspect-ratio:1; border-radius:6px; background:#e8edf1; font-size:.7rem; display:flex; align-items:center; justify-content:center;}
+:root[data-theme="dark"] .calendar .day:not(.booked):not(.maint){background:#1c2f3d;}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .calendar .day:not(.booked):not(.maint){background:#1c2f3d;} }
+.calendar .booked{background:var(--teal); color:#fff; font-weight:bold;}
+.calendar .maint{background:var(--amber); color:#2b1900; font-weight:bold;}
+.legend{display:flex; gap:14px; margin-top:10px; font-size:.75rem; color:var(--muted); flex-wrap:wrap;}
+.legend span{display:flex; align-items:center; gap:5px;}
+.dot{width:10px; height:10px; border-radius:3px; display:inline-block;}
+.final-cta{
+  text-align:center; background:var(--navy); color:#fff; border-radius:18px; padding:32px 20px; margin-bottom:30px;
+}
+.final-cta h3{margin:0 0 8px; font-size:1.2rem;}
+.final-cta p{color:#cfe4ee; font-size:.9rem; margin:0 0 18px;}
+.final-cta a{background:#25D366; color:#fff; padding:13px 24px; border-radius:30px; text-decoration:none; font-weight:bold; font-size:.9rem;}
+footer{text-align:center; color:var(--muted); font-size:.78rem; padding:10px 14px calc(24px + env(safe-area-inset-bottom,0px));}
+
+.cars{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+.cars button{flex:1 1 30%; border:1px solid var(--muted); background:transparent; color:var(--txt); padding:9px 6px; border-radius:10px; font-family:inherit; font-size:.82rem; cursor:pointer;}
+.cars button.on{background:var(--navy); color:#fff; border-color:var(--navy);}
+.calnav{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+.calnav button{width:38px; height:38px; border-radius:50%; border:1px solid var(--muted); background:transparent; color:var(--txt); font-size:1.2rem; cursor:pointer;}
+.calnav b{font-size:.95rem;}
+.calendar .dow{text-align:center; font-size:.68rem; color:var(--muted); padding:2px 0;}
+.calendar .avail{cursor:pointer;}
+.calendar .past{opacity:.35;}
+.calendar .range{background:rgba(37,99,235,.28) !important; color:var(--txt);}
+.calendar .sel{background:#2563eb !important; color:#fff !important; font-weight:bold;}
+.picked{margin:14px 0 12px; padding:10px 12px; border-radius:10px; background:rgba(23,162,162,.12); font-size:.85rem; line-height:1.6;}
+#bookForm{display:grid; gap:10px;}
+#bookForm input{padding:12px; border-radius:10px; border:1px solid var(--muted); background:var(--card); color:var(--txt); font-family:inherit; font-size:.95rem;}
+#bookForm button{background:#25D366; color:#fff; border:0; padding:13px; border-radius:30px; font-family:inherit; font-weight:bold; font-size:.95rem; cursor:pointer;}
+#bookForm button:disabled{opacity:.45; cursor:not-allowed;}
+.note{font-size:.74rem; color:var(--muted); margin:10px 0 0; line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>📅 وقّف الفوضى وأدر أسطول سياراتك من مكان وحيد</h1>
+  <p>نظام بسيط لوكالات كراء السيارات: حجوزات، عقود، حالة السيارة، وتذكير بالصيانة — بلا Excel وبلا ورق.</p>
+  <a class="cta" href="https://wa.me/21654012599?text=مرحبا،%20نحب%20نعرف%20أكثر%20على%20نظام%20كراء%20السيارات" target="_blank">💬 اطلب عرض تجريبي مجاني</a>
+</div>
+
+<main>
+  <h2>المشاكل اللي نعرفوها كامل</h2>
+  <div class="problems">
+    <div class="problem"><span class="ico">📋</span><p>حجوزات مكتوبة بالورقة أو Excel، ويصير تداخل بين موعدين لنفس السيارة</p></div>
+    <div class="problem"><span class="ico">🚗</span><p>نزاعات مع الحريف على خدوش أو أضرار ما كانتش موثقة وقت التسليم</p></div>
+    <div class="problem"><span class="ico">🔧</span><p>ننسى مواعيد الصيانة أو التأمين إلى حين تفوت المدة</p></div>
+  </div>
+
+  <h2>الحل</h2>
+  <div class="features">
+    <div class="feature"><div class="ico">📆</div><h3>تقويم حجز حي</h3><p>تشوف بلمحة وحدة أي سيارة متاحة، أي واحدة محجوزة، وأي واحدة في الصيانة.</p></div>
+    <div class="feature"><div class="ico">📸</div><h3>توثيق بالصور</h3><p>تصوير حالة السيارة وقت التسليم والاسترجاع، يفادي أي خلاف مع الحريف.</p></div>
+    <div class="feature"><div class="ico">📝</div><h3>عقد رقمي سريع</h3><p>عقد جاهز يتعمر في دقيقة ويتبعث للحريف مباشرة، بلا طباعة.</p></div>
+    <div class="feature"><div class="ico">🔔</div><h3>تذكير أوتوماتيكي</h3><p>إشعار قبل ما تفوت مدة التأمين أو موعد الصيانة الدورية.</p></div>
+  </div>
+
+  <div class="mock">
+    <h4>جرّبي بنفسك: حجز سيارة (نموذج تجريبي)</h4>
+    <div class="cars" id="cars"></div>
+    <div class="calnav"><button type="button" id="prev" aria-label="الشهر الفارط">›</button><b id="calLabel"></b><button type="button" id="next" aria-label="الشهر الجاي">‹</button></div>
+    <div class="calendar" id="cal"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:#e8edf1;border:1px solid #c5d0d8"></i> متاحة</span>
+      <span><i class="dot" style="background:#17a2a2"></i> محجوزة</span>
+      <span><i class="dot" style="background:#f5a623"></i> صيانة</span>
+      <span><i class="dot" style="background:#2563eb"></i> اختيارك</span>
+    </div>
+    <div class="picked" id="picked">اختاري السيارة، وبعدها يوم الاستلام ويوم الإرجاع.</div>
+    <form id="bookForm" autocomplete="off">
+      <input name="name" placeholder="الاسم" required>
+      <input name="tel" type="tel" placeholder="رقم التليفون" required>
+      <button type="submit" id="sendBtn" disabled>📲 ابعث طلب الحجز عبر واتساب</button>
+    </form>
+    <p class="note">نموذج للتوضيح: في النظام الحقيقي الطلب يوصل مباشرة للوحة الوكالة، والأيام المحجوزة تجي من بياناتها.</p>
+  </div>
+
+  <div class="final-cta">
+    <h3>عندك وكالة كراء سيارات؟</h3>
+    <p>نعملولك عرض تجريبي مجاني، مخصص على قد السيارات اللي عندك — بلا التزام.</p>
+    <a href="https://wa.me/21654012599?text=مرحبا،%20عندي%20وكالة%20كراء%20سيارات%20ونحب%20نجرب%20النظام" target="_blank">📞 تواصل معانا الآن</a>
+  </div>
+</main>
+
+<footer>صُنع بـ ❤️ في تونس</footer>
+
+<script>
+const WA='21654012599';
+const cars=['Renault Clio 5','Peugeot 208','Kia Picanto'];
+const months=['جانفي','فيفري','مارس','أفريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const dows=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+let car=0, start=null, end=null;
+const today=new Date(); today.setHours(0,0,0,0);
+let view=new Date(today.getFullYear(), today.getMonth(), 1);
+const grid=document.getElementById('cal'), picked=document.getElementById('picked'), sendBtn=document.getElementById('sendBtn');
+
+// حالة اليوم لكل سيارة: تجريبية، تتبدّل بالسيارة والشهر (في النظام الحقيقي تجي من بيانات الوكالة)
+function status(date){
+  const k=Math.floor((date.getDate()+car*3)/3);
+  const h=(k*3+car*2+date.getMonth())%7;
+  if(h<2) return 'booked';
+  if(h===2 && (date.getDate()+car)%3===0) return 'maint';
+  return '';
+}
+function fmt(d){ return d.getDate()+' '+months[d.getMonth()]; }
+function blocked(a,b){ for(let t=new Date(a); t<=b; t.setDate(t.getDate()+1)){ if(status(t)) return true; } return false; }
+function updatePicked(msg){
+  if(msg){ picked.textContent=msg; }
+  else if(!start){ picked.textContent='اختاري يوم الاستلام.'; }
+  else if(!end){ picked.textContent='الاستلام: '+fmt(start)+' — توّا اختاري يوم الإرجاع.'; }
+  else { const n=Math.round((end-start)/86400000)+1; picked.innerHTML='<b>'+cars[car]+'</b><br>من '+fmt(start)+' إلى '+fmt(end)+' ('+(n===1?'يوم':n===2?'يومين':n+(n>10?' يوم':' أيام'))+')'; }
+  sendBtn.disabled=!(start&&end);
+}
+function render(){
+  const y=view.getFullYear(), m=view.getMonth();
+  document.getElementById('calLabel').textContent=months[m]+' '+y;
+  grid.innerHTML='';
+  dows.forEach(n=>{const e=document.createElement('div'); e.className='dow'; e.textContent=n; grid.appendChild(e);});
+  const first=new Date(y,m,1).getDay(), days=new Date(y,m+1,0).getDate();
+  for(let i=0;i<first;i++) grid.appendChild(document.createElement('div'));
+  for(let d=1; d<=days; d++){
+    const date=new Date(y,m,d), el=document.createElement('div');
+    el.textContent=d; el.className='day';
+    if(date<today){ el.classList.add('past'); }
+    else{
+      const st=status(date);
+      if(st){ el.classList.add(st); }
+      else{ el.classList.add('avail'); el.onclick=()=>pick(date); }
+    }
+    if(start && +date===+start) el.classList.add('sel');
+    if(end && +date===+end) el.classList.add('sel');
+    if(start && end && date>start && date<end) el.classList.add('range');
+    grid.appendChild(el);
+  }
+}
+function pick(date){
+  if(!start || end || date<start){ start=date; end=null; updatePicked(); }
+  else if(+date===+start){ end=date; updatePicked(); }
+  else if(blocked(start,date)){ start=date; end=null; updatePicked('في الفترة هاذي أيام محجوزة، اختاري فترة متواصلة.'); }
+  else { end=date; updatePicked(); }
+  render();
+}
+const carsBox=document.getElementById('cars');
+cars.forEach((n,i)=>{ const b=document.createElement('button'); b.type='button'; b.textContent=n; if(i===0) b.className='on';
+  b.onclick=()=>{ car=i; start=end=null; carsBox.querySelectorAll('button').forEach((x,j)=>x.className=j===i?'on':''); updatePicked(); render(); };
+  carsBox.appendChild(b); });
+document.getElementById('prev').onclick=()=>{ const p=new Date(view.getFullYear(),view.getMonth()-1,1); if(p>=new Date(today.getFullYear(),today.getMonth(),1)){ view=p; render(); } };
+document.getElementById('next').onclick=()=>{ view=new Date(view.getFullYear(),view.getMonth()+1,1); render(); };
+document.getElementById('bookForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  if(!(start&&end)) return;
+  const f=this;
+  const text='نحب نحجز سيارة. السيارة: '+cars[car]+' — من '+fmt(start)+' إلى '+fmt(end)+' — الاسم: '+f.name.value+' — الهاتف: '+f.tel.value;
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(text),'_blank');
+});
+render(); updatePicked();
+</script>
+
+</body>
+</html>
